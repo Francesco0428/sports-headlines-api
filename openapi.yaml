@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: Sports Headlines API
+  version: 1.0.0
+paths:
+  /headlines:
+    get:
+      summary: Get latest sports headlines
+      operationId: getHeadlines
+      responses:
+        '200':
+          description: A list of sports headlines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    summary:
+                      type: string
+                    link:
+                      type: string
