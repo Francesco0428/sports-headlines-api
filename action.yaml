@@ -1,0 +1,10 @@
+schema_version: v1
+name_for_human: Sports Headlines Fetcher
+name_for_model: sportsHeadlinesFetcher
+description_for_human: Fetches the latest sports headlines from ESPN.
+description_for_model: Useful for retrieving the latest sports news headlines.
+api:
+  type: openapi
+  url: https://YOUR-FINAL-URL/openapi.yaml
+auth:
+  type: none
