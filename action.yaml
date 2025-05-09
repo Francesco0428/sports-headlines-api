@@ -5,6 +5,6 @@ description_for_human: Fetches the latest sports headlines from ESPN.
 description_for_model: Useful for retrieving the latest sports news headlines.
 api:
   type: openapi
-  url: https://YOUR-FINAL-URL/openapi.yaml
+  url: https://RENDER-URL-HERE/openapi.yaml
 auth:
   type: none
