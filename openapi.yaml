@@ -25,3 +25,49 @@ paths:
                       type: string
                     link:
                       type: string
+
+  /story_context:
+    post:
+      summary: Get summary and stats for one headline
+      operationId: getStoryContext
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                headline:
+                  type: string
+                  description: The headline text to summarise
+      responses:
+        "200":
+          description: Summary and stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryContext"
+
+components:
+  schemas:
+    StoryContext:
+      type: object
+      properties:
+        headline:
+          type: string
+        summary:
+          type: array
+          items:
+            type: string
+        notable_stats:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              value:
+                type: string
+        source_url:
+          type: string
+
