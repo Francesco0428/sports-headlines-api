@@ -48,4 +48,5 @@ def story_context():
         ],
         "source_url": "https://example.com"
     }
+    print("DEBUG story_context response:", response, flush=True)
     return jsonify(response)
