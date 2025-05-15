@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonifyimport feedparser
+from flask import Flask, request, jsonify
+import feedparser
 app = Flask(__name__)
 
 @app.route('/headlines', methods=['GET'])
