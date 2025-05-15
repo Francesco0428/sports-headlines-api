@@ -31,7 +31,7 @@ def story_context():
     Return a summary + notable stats for one sports headline.
     Accepts JSON: {"headline": "<headline text>"}   # use the text for now
     """
-    data = request.get_json()
+    data = request.get_json(force=True, silent=True) or {}
     headline_text = data.get("headline", "No headline provided")
 
     # --- TEMPORARY STUB – replace with real summary logic later ---
