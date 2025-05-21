@@ -25,3 +25,23 @@ paths:
                       type: string
                     link:
                       type: string
+    /nhl_headlines:
+      get:
+        summary: Get latest NHL sports headlines
+        operationId: getNhlHeadlines
+        responses:
+          "200":
+            description: A list of NHL sports headlines
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      summary:
+                        type: string
+                      link:
+                        type: string
