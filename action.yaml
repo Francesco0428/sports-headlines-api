@@ -8,3 +8,14 @@ api:
   url: https://sports-headlines-api.onrender.com/openapi.yaml
 auth:
   type: none
+
+- type: openapi
+  name: getNhlHeadlines
+  description: Get top NHL headlines from multiple sources.
+  operationId: getNhlHeadlines
+  path: /nhl_headlines
+  method: get
+  parameters: []
+  responses:
+    "200":
+      description: A list of NHL headlines.
