@@ -53,22 +53,21 @@ import requests
 @app.route("/reddit_nhl")
 def get_reddit_nhl():
     url = "https://www.reddit.com/r/nhl.json"
-headers = {"User-Agent": "FrancescoScriptBot/0.1"}
+    headers = {"User-Agent": "FrancescoScriptBot/0.1"}
 
-try:
-    response = requests.get(url, headers=headers)
     try:
-        data = response.json()
-    except Exception:
-        print("REDDIT RAW RESPONSE:", response.text)
-        return jsonify({"error": "Failed to parse Reddit response"})
+        response = requests.get(url, headers=headers)
+        try:
+            data = response.json()
+        except Exception:
+            print("REDDIT RAW RESPONSE:", response.text)
+            return jsonify({"error": "Failed to parse Reddit response"})
 
-    posts = data["data"]["children"]
+        posts = data["data"]["children"]
 
-    # Sort: "Discussion" posts first, then by upvotes
-    discussion_posts = []
-    other_posts = []
-    
+        # Sort: "Discussion" posts first, then by upvotes
+        discussion_posts = []
+        other_posts = []
 
         for post in posts:
             post_data = post["data"]
@@ -84,7 +83,6 @@ try:
             else:
                 other_posts.append(post_info)
 
-        # Combine: Fill up to 15 with discussion first, then other
         final_posts = discussion_posts[:15]
         if len(final_posts) < 15:
             final_posts += other_posts[:15 - len(final_posts)]
