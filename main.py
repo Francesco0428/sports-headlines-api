@@ -53,16 +53,22 @@ import requests
 @app.route("/reddit_nhl")
 def get_reddit_nhl():
     url = "https://www.reddit.com/r/nhl.json"
-    headers = {"User-Agent": "FrancescoScriptBot/0.1"}
+headers = {"User-Agent": "FrancescoScriptBot/0.1"}
 
+try:
+    response = requests.get(url, headers=headers)
     try:
-        response = requests.get(url, headers=headers)
         data = response.json()
-        posts = data["data"]["children"]
+    except Exception:
+        print("REDDIT RAW RESPONSE:", response.text)
+        return jsonify({"error": "Failed to parse Reddit response"})
 
-        # Sort: "Discussion" posts first, then by upvotes
-        discussion_posts = []
-        other_posts = []
+    posts = data["data"]["children"]
+
+    # Sort: "Discussion" posts first, then by upvotes
+    discussion_posts = []
+    other_posts = []
+    
 
         for post in posts:
             post_data = post["data"]
