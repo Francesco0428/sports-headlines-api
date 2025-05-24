@@ -25,3 +25,26 @@ paths:
                       type: string
                     link:
                       type: string
+    /reddit_nhl:
+      get:
+        summary: Get top trending posts from r/nhl subreddit (prioritizes Discussion flair)
+        operationId: getRedditNhl
+        responses:
+          "200":
+            description: A list of top Reddit posts from r/nhl
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      flair:
+                        type: string
+                      upvotes:
+                        type: integer
+                      link:
+                        type: string
+    
