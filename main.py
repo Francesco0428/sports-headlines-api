@@ -47,20 +47,20 @@ def get_nhl_headlines():
 
     return jsonify(all_headlines)
 
-from flask import Flask, jsonify
-import requests
-import feedparser  # in case you're using it for other endpoints
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "API is running!"
-
 @app.route("/reddit_nhl", methods=["GET"])
 def get_reddit_nhl():
+    import requests
+    from flask import jsonify
+
     url = "https://www.reddit.com/r/nhl.json"
-    headers = {"User-agent": "Mozilla/5.0"}
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/122.0.0.0 Safari/537.36"
+        )
+    }
+
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
@@ -87,6 +87,3 @@ def get_reddit_nhl():
 
     result = discussion[:10] + others[:(15 - len(discussion[:10]))]
     return jsonify(result)
-
-if __name__ == "__main__":
-    app.run(debug=True)
