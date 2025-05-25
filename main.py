@@ -54,16 +54,14 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import requests
 
-app = FastAPI()
-
-@app.get("/reddit_nhl")
+@app.route("/reddit_nhl", methods=["GET"])
 def get_reddit_nhl():
     url = "https://www.reddit.com/r/nhl.json"
     headers = {"User-agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
-        return JSONResponse(content={"error": "Failed to fetch Reddit data"}, status_code=500)
+        return jsonify({"error": "Failed to fetch Reddit data"}), 500
 
     data = response.json()
     posts = data["data"]["children"]
@@ -85,4 +83,4 @@ def get_reddit_nhl():
             others.append(entry)
 
     result = discussion[:10] + others[:(15 - len(discussion[:10]))]
-    return JSONResponse(content={"posts": result})
+    return jsonify(result)
