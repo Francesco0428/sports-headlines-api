@@ -47,44 +47,50 @@ def get_nhl_headlines():
 
     return jsonify(all_headlines)
 
+from flask import Flask, jsonify, send_from_directory
 import os
-import praw
-from flask import Flask, jsonify
+import requests
 
 app = Flask(__name__)
 
-# Initialize Reddit client using env variables
-reddit = praw.Reddit(
-    client_id=os.getenv("REDDIT_CLIENT_ID"),
-    client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    username=os.getenv("REDDIT_USERNAME"),
-    password=os.getenv("REDDIT_PASSWORD"),
-    user_agent=os.getenv("REDDIT_USER_AGENT")
-)
+@app.route("/")
+def home():
+    return "Sports Headlines API is running."
 
 @app.route("/reddit_nhl", methods=["GET"])
 def get_reddit_nhl():
-    try:
-        subreddit = reddit.subreddit("nhl")
-        posts = subreddit.hot(limit=25)
+    url = "https://www.reddit.com/r/nhl.json"
+    headers = {"User-agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
 
-        discussion = []
-        others = []
+    if response.status_code != 200:
+        return jsonify({"error": "Failed to fetch Reddit data"}), 500
 
-        for post in posts:
-            item = {
-                "title": post.title,
-                "url": f"https://www.reddit.com{post.permalink}",
-                "flair": post.link_flair_text,
-                "score": post.score
-            }
-            if post.link_flair_text == "Discussion":
-                discussion.append(item)
-            else:
-                others.append(item)
+    data = response.json()
+    posts = data["data"]["children"]
 
-        result = discussion[:10] + others[:max(0, 15 - len(discussion[:10]))]
-        return jsonify(result)
+    discussion = []
+    others = []
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    for post in posts:
+        p = post["data"]
+        entry = {
+            "title": p.get("title"),
+            "url": f"https://www.reddit.com{p.get('permalink')}",
+            "flair": p.get("link_flair_text"),
+            "score": p.get("score")
+        }
+        if p.get("link_flair_text") == "Discussion":
+            discussion.append(entry)
+        else:
+            others.append(entry)
+
+    result = discussion[:10] + others[:(15 - len(discussion[:10]))]
+    return jsonify(result)
+
+@app.route("/openapi.yaml")
+def serve_openapi_yaml():
+    return send_from_directory(directory=os.getcwd(), path="openapi.yaml", mimetype="text/yaml")
+
+if __name__ == "__main__":
+    app.run(debug=True)
