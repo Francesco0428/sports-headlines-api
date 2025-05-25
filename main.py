@@ -47,12 +47,15 @@ def get_nhl_headlines():
 
     return jsonify(all_headlines)
 
+from flask import Flask, jsonify
 import requests
-from flask import jsonify
+import feedparser  # in case you're using it for other endpoints
 
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-import requests
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "API is running!"
 
 @app.route("/reddit_nhl", methods=["GET"])
 def get_reddit_nhl():
@@ -84,3 +87,6 @@ def get_reddit_nhl():
 
     result = discussion[:10] + others[:(15 - len(discussion[:10]))]
     return jsonify(result)
+
+if __name__ == "__main__":
+    app.run(debug=True)
