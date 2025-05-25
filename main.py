@@ -50,19 +50,24 @@ def get_nhl_headlines():
 import requests
 from flask import jsonify
 
-@app.route("/reddit_nhl", methods=["GET"])
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+import requests
+
+app = FastAPI()
+
+@app.get("/reddit_nhl")
 def get_reddit_nhl():
     url = "https://www.reddit.com/r/nhl.json"
     headers = {"User-agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
-        return jsonify({"error": "Failed to fetch Reddit data"}), 500
+        return JSONResponse(content={"error": "Failed to fetch Reddit data"}, status_code=500)
 
     data = response.json()
     posts = data["data"]["children"]
 
-    # Filter and format top 15 posts, prioritize 'Discussion' flair
     discussion = []
     others = []
 
@@ -79,6 +84,5 @@ def get_reddit_nhl():
         else:
             others.append(entry)
 
-    # Combine top discussion + other posts, capped at 15
     result = discussion[:10] + others[:(15 - len(discussion[:10]))]
-    return jsonify(result)
+    return JSONResponse(content={"posts": result})
