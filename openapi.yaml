@@ -48,3 +48,24 @@ paths:
                       type: integer
                     url:
                       type: string
+
+  /nhl_headlines:
+    get:
+      summary: Get top NHL headlines from NHL.com, SB Nation, and The Hockey News
+      operationId: getNhlHeadlines
+      responses:
+        "200":
+          description: A list of top NHL headlines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    summary:
+                      type: string
+                    link:
+                      type: string
