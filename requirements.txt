@@ -1,4 +1,5 @@
-Flask==2.2.5
+fastapi
+uvicorn[standard]
+requests
 feedparser==6.0.11
 gunicorn
-requests
