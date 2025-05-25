@@ -47,50 +47,41 @@ def get_nhl_headlines():
 
     return jsonify(all_headlines)
 
-from flask import Flask, jsonify, send_from_directory
-import os
-import requests
+import praw
 
-app = Flask(__name__)
+REDDIT_CLIENT_ID = "T4p5CfEcHQZBM8fJDhe12A"
+REDDIT_CLIENT_SECRET = "nFpdG1UHLxCDmKOJBvSoTzQS6sa96g"
+REDDIT_USER_AGENT = "sports-script-bot/1.0"
 
-@app.route("/")
-def home():
-    return "Sports Headlines API is running."
+reddit = praw.Reddit(
+    client_id=REDDIT_CLIENT_ID,
+    client_secret=REDDIT_CLIENT_SECRET,
+    user_agent=REDDIT_USER_AGENT
+)
 
 @app.route("/reddit_nhl", methods=["GET"])
 def get_reddit_nhl():
-    url = "https://www.reddit.com/r/nhl.json"
-    headers = {"User-agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers)
+    try:
+        subreddit = reddit.subreddit("nhl")
+        posts = subreddit.hot(limit=25)
 
-    if response.status_code != 200:
-        return jsonify({"error": "Failed to fetch Reddit data"}), 500
+        discussion = []
+        others = []
 
-    data = response.json()
-    posts = data["data"]["children"]
+        for post in posts:
+            entry = {
+                "title": post.title,
+                "url": f"https://www.reddit.com{post.permalink}",
+                "flair": post.link_flair_text,
+                "upvotes": post.score
+            }
+            if post.link_flair_text == "Discussion":
+                discussion.append(entry)
+            else:
+                others.append(entry)
 
-    discussion = []
-    others = []
+        result = discussion[:10] + others[:(15 - len(discussion[:10]))]
+        return jsonify(result)
 
-    for post in posts:
-        p = post["data"]
-        entry = {
-            "title": p.get("title"),
-            "url": f"https://www.reddit.com{p.get('permalink')}",
-            "flair": p.get("link_flair_text"),
-            "score": p.get("score")
-        }
-        if p.get("link_flair_text") == "Discussion":
-            discussion.append(entry)
-        else:
-            others.append(entry)
-
-    result = discussion[:10] + others[:(15 - len(discussion[:10]))]
-    return jsonify(result)
-
-@app.route("/openapi.yaml")
-def serve_openapi_yaml():
-    return send_from_directory(directory=os.getcwd(), path="openapi.yaml", mimetype="text/yaml")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    except Exception as e:
+        return jsonify({"error": f"Reddit API error: {str(e)}"}), 500
