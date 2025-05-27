@@ -85,3 +85,16 @@ def get_reddit_nhl():
 
     except Exception as e:
         return jsonify({"error": f"Reddit API error: {str(e)}"}), 500
+
+@app.route('/nba_headlines', methods=['GET'])
+def get_nba_headlines():
+    feed_url = 'https://www.cbssports.com/rss/headlines/nba/'
+    feed = feedparser.parse(feed_url)
+    headlines = []
+    for entry in feed.entries[:5]:
+        headlines.append({
+            'title': entry.title,
+            'summary': entry.get('summary', 'null'),
+            'link': entry.link
+        })
+    return jsonify(headlines)
